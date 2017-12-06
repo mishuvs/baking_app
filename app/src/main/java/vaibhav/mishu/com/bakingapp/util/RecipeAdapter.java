@@ -82,7 +82,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ItemHolder
             if(getAdapterPosition() != 0){
                 Intent i = new Intent(mContext, StepActivity.class);
                 i.putExtra("recipe",recipe);
-                i.putExtra("index",getAdapterPosition());
+                i.putExtra("index",getAdapterPosition()-1);
                 mContext.startActivity(i);
             }
         }
