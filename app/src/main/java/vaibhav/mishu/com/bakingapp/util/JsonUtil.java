@@ -1,11 +1,13 @@
 package vaibhav.mishu.com.bakingapp.util;
 
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -71,11 +73,11 @@ public class JsonUtil {
         return null;
     }
 
-    public static class Recipe {
-        String name;
-        ArrayList<String> ingredients;
-        ArrayList<Step> steps;
-        int servings;
+    public static class Recipe implements Serializable{
+        public String name;
+        public ArrayList<String> ingredients;
+        public ArrayList<Step> steps;
+        public int servings;
 
         Recipe(String recipeName, ArrayList<String> recipeIngedients, ArrayList<Step> recipeSteps, int serves){
             name = recipeName;
@@ -85,8 +87,8 @@ public class JsonUtil {
         }
     }
 
-    public static class Step {
-        String shortDescription, description, videoURL, thumbnailURL;
+    public static class Step implements Serializable {
+        public String shortDescription, description, videoURL, thumbnailURL;
 
         Step(String shDescr, String descr, String video, String thumb){
             shortDescription = shDescr;

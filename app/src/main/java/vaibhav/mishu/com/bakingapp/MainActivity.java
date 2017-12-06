@@ -21,7 +21,7 @@ import vaibhav.mishu.com.bakingapp.util.NetworkUtil;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<JsonUtil.Recipe> recipes;
+    static ArrayList<JsonUtil.Recipe> recipes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         GetRecipesTask task = new GetRecipesTask(this);
         task.execute();
 
-        ArrayList<String> recipeNames = new ArrayList<>();
+        final ArrayList<String> recipeNames = new ArrayList<>();
         recipeNames.add("Nutella Pie");
         recipeNames.add("Brownies");
         recipeNames.add("Yellow Cake");
@@ -44,14 +44,17 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this,"clicked: " + position, Toast.LENGTH_SHORT).show();
+                if(recipes!=null){
+                    Intent i = new Intent(MainActivity.this,DetailActivity.class);
+                    i.putExtra("recipe",recipes.get(position));
+                    startActivity(i);
+                }
+                Log.i("haha","recipes is this: " + recipes);
             }
         });
     }
 
     static class GetRecipesTask extends AsyncTask<Void,Void,ArrayList<JsonUtil.Recipe>>{
-
-        ArrayList<JsonUtil.Recipe> recipes;
 
         private WeakReference<MainActivity> activityReference;
 
@@ -61,21 +64,25 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<JsonUtil.Recipe> doInBackground(Void... voids) {
+
+            ArrayList<JsonUtil.Recipe> newRecipes = new ArrayList<>();
+
             try {
-                recipes = JsonUtil.jsonStingToRecipes(
+                newRecipes = JsonUtil.jsonStingToRecipes(
                         NetworkUtil.getResponseFromHttpUrl(NetworkUtil.buildURL())
                 );
-                return recipes;
+                return newRecipes;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return newRecipes;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<JsonUtil.Recipe> recipes) {
-            super.onPostExecute(recipes);
-            activityReference.get().recipes = recipes;
+        protected void onPostExecute(ArrayList<JsonUtil.Recipe> newRecipes) {
+            super.onPostExecute(newRecipes);
+             recipes = newRecipes;
+             Log.i("haha",recipes + "");
         }
     }
 }
