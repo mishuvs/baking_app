@@ -1,14 +1,11 @@
 package vaibhav.mishu.com.bakingapp;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -18,10 +15,10 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import vaibhav.mishu.com.bakingapp.databinding.ActivityStepBinding;
 import vaibhav.mishu.com.bakingapp.util.JsonUtil;
 
 public class StepActivity extends AppCompatActivity {
@@ -29,27 +26,22 @@ public class StepActivity extends AppCompatActivity {
     JsonUtil.Recipe recipe;
     int index;
 
-    SimpleExoPlayerView playerView;
+    ActivityStepBinding mBinding;
+
     SimpleExoPlayer player;
-    TextView stepText;
-    Button next,previous;
 
     private boolean playWhenReady = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_step);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_step);
 
         Intent i = getIntent();
         recipe = (JsonUtil.Recipe) i.getSerializableExtra("recipe");
         index = i.getIntExtra("index",0);
 
-        stepText = findViewById(R.id.step_description);
-        playerView = (SimpleExoPlayerView) findViewById(R.id.step_video);
-        next = findViewById(R.id.next);
-        previous = findViewById(R.id.previous);
-        next.setOnClickListener(new View.OnClickListener() {
+        mBinding.next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 player.stop();
@@ -57,7 +49,7 @@ public class StepActivity extends AppCompatActivity {
                 setFields();
             }
         });
-        previous.setOnClickListener(new View.OnClickListener() {
+        mBinding.previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 player.stop();
@@ -71,10 +63,10 @@ public class StepActivity extends AppCompatActivity {
     }
 
     private void checkButtons(){
-        if(index==0) previous.setEnabled(false);
-        else previous.setEnabled(true);
-        if(index==recipe.steps.size()-1) next.setEnabled(false);
-        else next.setEnabled(true);
+        if(index==0) mBinding.previous.setEnabled(false);
+        else mBinding.previous.setEnabled(true);
+        if(index==recipe.steps.size()-1) mBinding.next.setEnabled(false);
+        else mBinding.next.setEnabled(true);
     }
 
     private void setFields() {
@@ -82,11 +74,11 @@ public class StepActivity extends AppCompatActivity {
         checkButtons();
 
         if(recipe.steps.get(index).videoURL.length()!=0) {
-            playerView.setVisibility(View.VISIBLE);
+            mBinding.playerView.setVisibility(View.VISIBLE);
             initializePlayer();
         }
-        else playerView.setVisibility(View.GONE);
-        stepText.setText(recipe.steps.get(index).description);
+        else mBinding.playerView.setVisibility(View.GONE);
+        mBinding.stepDescription.setText(recipe.steps.get(index).description);
     }
 
     private void initializePlayer() {
@@ -94,7 +86,7 @@ public class StepActivity extends AppCompatActivity {
                 new DefaultRenderersFactory(this),
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
-        playerView.setPlayer(player);
+        mBinding.playerView.setPlayer(player);
 
         player.setPlayWhenReady(playWhenReady);
 
