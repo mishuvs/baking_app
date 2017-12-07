@@ -44,7 +44,7 @@ public class StepActivity extends AppCompatActivity {
         mBinding.next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                player.stop();
+                if(player!=null) player.stop();
                 index++;
                 setFields();
             }
@@ -52,7 +52,7 @@ public class StepActivity extends AppCompatActivity {
         mBinding.previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                player.stop();
+                if(player!=null) player.stop();
                 index--;
                 setFields();
             }
