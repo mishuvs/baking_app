@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -30,6 +31,8 @@ public class StepActivity extends AppCompatActivity {
 
     SimpleExoPlayerView playerView;
     SimpleExoPlayer player;
+    TextView stepText;
+    Button next,previous;
 
     private boolean playWhenReady = true;
 
@@ -42,16 +45,48 @@ public class StepActivity extends AppCompatActivity {
         recipe = (JsonUtil.Recipe) i.getSerializableExtra("recipe");
         index = i.getIntExtra("index",0);
 
-        TextView stepText = findViewById(R.id.step_description);
-        stepText.setText(recipe.steps.get(index).description);
-
+        stepText = findViewById(R.id.step_description);
         playerView = (SimpleExoPlayerView) findViewById(R.id.step_video);
+        next = findViewById(R.id.next);
+        previous = findViewById(R.id.previous);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.stop();
+                index++;
+                setFields();
+            }
+        });
+        previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.stop();
+                index--;
+                setFields();
+            }
+        });
+
+        setFields();
+
+    }
+
+    private void checkButtons(){
+        if(index==0) previous.setEnabled(false);
+        else previous.setEnabled(true);
+        if(index==recipe.steps.size()-1) next.setEnabled(false);
+        else next.setEnabled(true);
+    }
+
+    private void setFields() {
+
+        checkButtons();
 
         if(recipe.steps.get(index).videoURL.length()!=0) {
+            playerView.setVisibility(View.VISIBLE);
             initializePlayer();
         }
         else playerView.setVisibility(View.GONE);
-
+        stepText.setText(recipe.steps.get(index).description);
     }
 
     private void initializePlayer() {
