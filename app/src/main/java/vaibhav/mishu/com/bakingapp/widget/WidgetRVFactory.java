@@ -69,8 +69,15 @@ public class WidgetRVFactory implements RemoteViewsService.RemoteViewsFactory {
         // and set the text based on the position.
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
         rv.setTextViewText(R.id.item, currentRecipe.steps.get(position).shortDescription);
+
+        //set Fill-In-Intent:
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtra("index",position);
+        rv.setOnClickFillInIntent(R.id.item, fillInIntent);
+
         // Return the remote views object.
-        return rv;    }
+        return rv;
+    }
 
     @Override
     public RemoteViews getLoadingView() {

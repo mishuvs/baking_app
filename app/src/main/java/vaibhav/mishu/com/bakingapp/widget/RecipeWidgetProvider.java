@@ -15,16 +15,20 @@ import android.widget.RemoteViews;
 import java.util.ArrayList;
 
 import vaibhav.mishu.com.bakingapp.R;
+import vaibhav.mishu.com.bakingapp.StepActivity;
 import vaibhav.mishu.com.bakingapp.util.FetchRecipes;
 import vaibhav.mishu.com.bakingapp.util.JsonUtil;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class RecipeWidgetProvider extends AppWidgetProvider {
 
-    public static String ACTION_NEXT_RECIPE = "GET_NEXT_RECIPE";
-    public static String ACTION_PREVIOUS_RECIPE = "GET_PREVIOUS_RECIPE";
+    public static String ACTION_NEXT_RECIPE = "GET_NEXT_RECIPE",
+            ACTION_PREVIOUS_RECIPE = "GET_PREVIOUS_RECIPE",
+            ACTION_CLICK_STEP = "CLICK_STEP";
     private static ArrayList<JsonUtil.Recipe> recipes;
     private static int recipeIndex;
     private static RemoteViews rv;
@@ -68,6 +72,12 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             PendingIntent previousRecipePI = PendingIntent.getBroadcast(context, 0, changeRecipe, 0);
             rv.setOnClickPendingIntent(R.id.previous_recipe, previousRecipePI);
 
+            //set PendingIntent template for collection items:
+            Intent i = new Intent(context, RecipeWidgetProvider.class);
+            i.setAction(ACTION_CLICK_STEP);
+            PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0 );
+            rv.setPendingIntentTemplate(R.id.grid_view, pi);
+
             //
             // Do additional processing specific to this app widget...
             //
@@ -81,6 +91,22 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
+
+        //fetching recipes again in case it is garbage collected
+        if(recipes==null) recipes = FetchRecipes.getRecipes(context);
+
+        //if step clicked:
+        if(intent.getAction().equals(ACTION_CLICK_STEP)){
+            Intent i = new Intent(context, StepActivity.class);
+            int position = intent.getIntExtra("index",0);
+            i.putExtra("recipe",recipes.get(recipeIndex));
+            i.putExtra("index",position);
+            i.setFlags(FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(i);
+            return;
+        }
+
+        //if arrows clicked:
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         if (intent.getAction().equals(ACTION_NEXT_RECIPE)) {
             if(recipeIndex < recipes.size() - 1) recipeIndex++;
@@ -90,6 +116,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             if(recipeIndex > 0) recipeIndex--;
             sharedPref.edit().putInt("widgetRecipeIndex",recipeIndex).apply();
         }
+
         rv.setTextViewText(R.id.widget_recipe_name, recipes.get(recipeIndex).name);
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, RecipeWidgetProvider.class));
