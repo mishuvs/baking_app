@@ -1,6 +1,14 @@
 package vaibhav.mishu.com.bakingapp.widget;
 
+import android.app.IntentService;
+import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -22,7 +30,7 @@ public class WidgetRVFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context mContext;
     private static ArrayList<JsonUtil.Recipe> recipes;
     private static JsonUtil.Recipe currentRecipe;
-    private int recipeIndex = 0;
+    private static int recipeIndex;
 
     WidgetRVFactory(Context context){
         mContext = context;
@@ -41,6 +49,7 @@ public class WidgetRVFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onDataSetChanged() {
         //start an intent service here in order to fetch the results.
+        recipeIndex = PreferenceManager.getDefaultSharedPreferences(mContext).getInt("widgetRecipeIndex",0);
         currentRecipe = recipes.get(recipeIndex);
     }
 
@@ -56,7 +65,6 @@ public class WidgetRVFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
-        Log.i("haha","getViewAt");
         // Construct a remote views item based on the app widget item XML file,
         // and set the text based on the position.
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
@@ -83,4 +91,5 @@ public class WidgetRVFactory implements RemoteViewsService.RemoteViewsFactory {
     public boolean hasStableIds() {
         return false;
     }
+
 }
