@@ -15,16 +15,5 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
-        Intent i = getIntent();
-        JsonUtil.Recipe recipe = (JsonUtil.Recipe) i.getSerializableExtra("recipe");
-
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        RecipeAdapter adapter = new RecipeAdapter(this);
-        adapter.swap(recipe);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-
     }
 }

@@ -1,27 +1,24 @@
 package vaibhav.mishu.com.bakingapp.util;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import vaibhav.mishu.com.bakingapp.DetailActivity;
 import vaibhav.mishu.com.bakingapp.R;
 import vaibhav.mishu.com.bakingapp.StepActivity;
+import vaibhav.mishu.com.bakingapp.StepFragment;
 
 /**
  * Created by Vaibhav on 12/6/2017.
  */
 
-public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ItemHolder> {
+public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ItemHolder> implements StepFragment.StepInterface {
 
     private JsonUtil.Recipe recipe;
     private Context mContext;
@@ -80,11 +77,31 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ItemHolder
         @Override
         public void onClick(View v) {
             if(getAdapterPosition() != 0){
-                Intent i = new Intent(mContext, StepActivity.class);
-                i.putExtra("recipe",recipe);
-                i.putExtra("index",getAdapterPosition()-1);
-                mContext.startActivity(i);
+                onStepSelected(getAdapterPosition()-1);
             }
         }
     }
+
+    @Override
+    public void onStepSelected(int position) {
+        StepFragment displayFrag = (StepFragment) ((DetailActivity) mContext).getFragmentManager()
+                .findFragmentById(R.id.step_fragment);
+        if (displayFrag == null) {
+            // DisplayFragment (Fragment B) is not in the layout (handset layout),
+            // so start DisplayActivity (Activity B)
+            // and pass it the info about the selected item
+            Intent i = new Intent(mContext, StepActivity.class);
+            i.putExtra("recipe",recipe);
+            i.putExtra("index",position);
+            mContext.startActivity(i);
+        } else {
+            // DisplayFragment (Fragment B) is in the layout (tablet layout),
+            // so tell the fragment to update
+            Bundle recipeInfo = new Bundle();
+            recipeInfo.putSerializable("recipe",recipe);
+            recipeInfo.putInt("index",position);
+            displayFrag.updateContent(recipeInfo);
+        }
+    }
+
 }
