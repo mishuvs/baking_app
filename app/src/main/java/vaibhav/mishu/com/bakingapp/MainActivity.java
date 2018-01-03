@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addAll(recipeNames);
         ListView listView = findViewById(R.id.recipe_list);
         listView.setAdapter(adapter);
+        listView.setEmptyView(findViewById(R.id.empty_view));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
