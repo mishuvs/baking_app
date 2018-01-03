@@ -12,7 +12,7 @@
         android:layout_weight="1"
         android:layout_height="match_parent"/>
     <!-- "Fragment B" -->
-    <fragment class="vaibhav.mishu.com.bakingapp.StepFragment"
+    <FrameLayout
         android:id="@+id/step_fragment"
         android:layout_width="0dp"
         android:layout_weight="1"

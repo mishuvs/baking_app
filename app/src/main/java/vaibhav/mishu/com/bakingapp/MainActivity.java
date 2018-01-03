@@ -29,13 +29,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ArrayList<String> recipeNames = new ArrayList<>();
+
         recipes = FetchRecipes.getRecipes(this);
 
-        final ArrayList<String> recipeNames = new ArrayList<>();
-        recipeNames.add("Nutella Pie");
-        recipeNames.add("Brownies");
-        recipeNames.add("Yellow Cake");
-        recipeNames.add("Cheese Cake");
+        if(recipes!=null && recipes.size()>0){
+            for (JsonUtil.Recipe recipe: recipes
+                 ) {
+                recipeNames.add(recipe.name);
+            }
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.recipe_item, R.id.recipe_name);
         adapter.addAll(recipeNames);
@@ -44,12 +47,13 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(recipes!=null){
-                    Intent i = new Intent(MainActivity.this,DetailActivity.class);
-                    i.putExtra("recipe",recipes.get(position));
-                    startActivity(i);
+                if(recipes.size()==0 || recipes==null) {
+                    Toast.makeText(MainActivity.this,"Something went wrong! :(", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-                Log.i("haha","recipes is this: " + recipes);
+                Intent i = new Intent(MainActivity.this,DetailActivity.class);
+                i.putExtra("recipe",recipes.get(position));
+                startActivity(i);
             }
         });
     }

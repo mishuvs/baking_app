@@ -116,12 +116,14 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             sharedPref.edit().putInt("widgetRecipeIndex",recipeIndex).apply();
         }
 
-        rv.setTextViewText(R.id.widget_recipe_name, recipes.get(recipeIndex).name);
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, RecipeWidgetProvider.class));
-        //notify data set changed
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.grid_view);
-        appWidgetManager.partiallyUpdateAppWidget(appWidgetIds, rv);
+        if(rv!=null){
+            rv.setTextViewText(R.id.widget_recipe_name, recipes.get(recipeIndex).name);
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, RecipeWidgetProvider.class));
+            //notify data set changed
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.grid_view);
+            appWidgetManager.partiallyUpdateAppWidget(appWidgetIds, rv);
+        }
     }
 
     @Override
