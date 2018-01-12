@@ -3,6 +3,7 @@ package vaibhav.mishu.com.bakingapp;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +21,8 @@ import vaibhav.mishu.com.bakingapp.util.RecipeAdapter;
 
 public class DetailFragment extends Fragment {
 
+    private RecyclerView recyclerView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -35,11 +38,29 @@ public class DetailFragment extends Fragment {
 
         ((TextView) getView().findViewById(R.id.title_recipe_name)).setText(recipe.name);
 
-        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+        recyclerView = getView().findViewById(R.id.recycler_view);
         RecipeAdapter adapter = new RecipeAdapter(getActivity());
         adapter.swap(recipe);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("rv_instance_state",
+                recyclerView.getLayoutManager().onSaveInstanceState());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState != null) {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(
+                    "rv_instance_state");
+            recyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+        }
+
     }
 }
