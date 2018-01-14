@@ -2,13 +2,15 @@ package vaibhav.mishu.com.bakingapp;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -18,29 +20,30 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import vaibhav.mishu.com.bakingapp.databinding.FragmentStepBinding;
+import butterknife.BindView;
 import vaibhav.mishu.com.bakingapp.util.JsonUtil;
 
 public class StepFragment extends Fragment {
 
     JsonUtil.Recipe recipe;
     int index;
-
-    FragmentStepBinding mBinding;
-
+    
     SimpleExoPlayer player;
-
+    @BindView(R.id.next) Button next;
+    @BindView(R.id.previous) Button previous;
+    @BindView(R.id.player_view) SimpleExoPlayerView playerView;
+    @BindView(R.id.step_description) TextView stepDescription;
+    
     private boolean playWhenReady = true;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_step, container, false);
-        return mBinding.getRoot();
+        return inflater.inflate(R.layout.fragment_step, container, false);
     }
 
     public interface StepInterface{
@@ -69,7 +72,7 @@ public class StepFragment extends Fragment {
     }
 
     private void initializeFragment() {
-        mBinding.next.setOnClickListener(new View.OnClickListener() {
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(player!=null) player.stop();
@@ -77,7 +80,7 @@ public class StepFragment extends Fragment {
                 setFields();
             }
         });
-        mBinding.previous.setOnClickListener(new View.OnClickListener() {
+        previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(player!=null) player.stop();
@@ -90,10 +93,10 @@ public class StepFragment extends Fragment {
     }
 
     private void checkButtons(){
-        if(index==0) mBinding.previous.setEnabled(false);
-        else mBinding.previous.setEnabled(true);
-        if(index==recipe.steps.size()-1) mBinding.next.setEnabled(false);
-        else mBinding.next.setEnabled(true);
+        if(index==0) previous.setEnabled(false);
+        else previous.setEnabled(true);
+        if(index==recipe.steps.size()-1) next.setEnabled(false);
+        else next.setEnabled(true);
     }
 
     private void setFields() {
@@ -101,11 +104,11 @@ public class StepFragment extends Fragment {
         checkButtons();
 
         if(recipe.steps.get(index).videoURL.length()!=0) {
-            mBinding.playerView.setVisibility(View.VISIBLE);
+            playerView.setVisibility(View.VISIBLE);
             initializePlayer();
         }
-        else mBinding.playerView.setVisibility(View.GONE);
-        mBinding.stepDescription.setText(recipe.steps.get(index).description);
+        else playerView.setVisibility(View.GONE);
+        stepDescription.setText(recipe.steps.get(index).description);
     }
 
     private void initializePlayer() {
@@ -113,7 +116,7 @@ public class StepFragment extends Fragment {
                 new DefaultRenderersFactory(getActivity()),
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
-        mBinding.playerView.setPlayer(player);
+        playerView.setPlayer(player);
 
         player.setPlayWhenReady(playWhenReady);
 

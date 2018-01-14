@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import butterknife.BindView;
 import vaibhav.mishu.com.bakingapp.util.JsonUtil;
 import vaibhav.mishu.com.bakingapp.util.RecipeAdapter;
 
@@ -21,7 +22,7 @@ import vaibhav.mishu.com.bakingapp.util.RecipeAdapter;
 
 public class DetailFragment extends Fragment {
 
-    private RecyclerView recyclerView;
+    @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,8 +38,6 @@ public class DetailFragment extends Fragment {
         JsonUtil.Recipe recipe = (JsonUtil.Recipe) i.getSerializableExtra("recipe");
 
         ((TextView) getView().findViewById(R.id.title_recipe_name)).setText(recipe.name);
-
-        recyclerView = getView().findViewById(R.id.recycler_view);
         RecipeAdapter adapter = new RecipeAdapter(getActivity());
         adapter.swap(recipe);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
