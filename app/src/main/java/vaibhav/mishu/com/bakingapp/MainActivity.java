@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import vaibhav.mishu.com.bakingapp.util.FetchRecipes;
 import vaibhav.mishu.com.bakingapp.util.JsonUtil;
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         ArrayList<String> recipeNames = new ArrayList<>();
 
