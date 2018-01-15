@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import vaibhav.mishu.com.bakingapp.util.JsonUtil;
 import vaibhav.mishu.com.bakingapp.util.RecipeAdapter;
 
@@ -27,8 +28,10 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_detail,
+        View view = inflater.inflate(R.layout.fragment_detail,
                 container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -39,27 +42,22 @@ public class DetailFragment extends Fragment {
 
         ((TextView) getView().findViewById(R.id.title_recipe_name)).setText(recipe.name);
         RecipeAdapter adapter = new RecipeAdapter(getActivity());
+        if(savedInstanceState!=null) {adapter.shouldInitiateIngredients = false;}
         adapter.swap(recipe);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
+
+        if (savedInstanceState != null) {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable("BUNDLE_RECYCLER_LAYOUT");
+            recyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+        }
+
         recyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("BUNDLE_RECYCLER_LAYOUT", recyclerView.getLayoutManager().onSaveInstanceState());
         super.onSaveInstanceState(outState);
-        outState.putParcelable("rv_instance_state",
-                recyclerView.getLayoutManager().onSaveInstanceState());
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if(savedInstanceState != null) {
-            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(
-                    "rv_instance_state");
-            recyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
-        }
-
     }
 }

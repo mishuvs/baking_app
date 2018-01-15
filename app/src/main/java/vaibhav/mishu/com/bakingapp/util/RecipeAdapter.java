@@ -31,6 +31,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ItemHolder
 
     private FragmentManager fm;
     private Boolean isSinglePane = true;
+    public Boolean shouldInitiateIngredients = true;
     private Fragment displayFrag;
     private View frag_container;
 
@@ -77,7 +78,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ItemHolder
             notifyDataSetChanged();
 
             //initiate ingredients_fragment if not single-pane
-            if(!isSinglePane){
+            if(!isSinglePane && shouldInitiateIngredients){
                 initiateIngredientsFrag();
             }
         }

@@ -3,9 +3,11 @@ package vaibhav.mishu.com.bakingapp;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import vaibhav.mishu.com.bakingapp.util.JsonUtil;
 
 public class StepFragment extends Fragment {
@@ -40,10 +43,16 @@ public class StepFragment extends Fragment {
     
     private boolean playWhenReady = true;
 
+    private long currentPlayerPosition = 0;
+
+    Bundle playerStateBundle;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_step, container, false);
+        View view = inflater.inflate(R.layout.fragment_step, container, false);
+        ButterKnife.bind(this,view);
+        return view;
     }
 
     public interface StepInterface{
@@ -61,10 +70,20 @@ public class StepFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Intent i = getActivity().getIntent();
-        if(i!=null){
-            recipe = (JsonUtil.Recipe) i.getSerializableExtra("recipe");
-            index = i.getIntExtra("index",0);
+        if (savedInstanceState != null) {
+            playerStateBundle = savedInstanceState.getBundle("STATE_BUNDLE");
+            currentPlayerPosition = playerStateBundle.getLong("PLAYER_POSITION");
+            recipe = (JsonUtil.Recipe) playerStateBundle.getSerializable("RECIPE_STEPS");
+            index = playerStateBundle.getInt("RECIPE_INDEX");
+            //set playerStateBundle as null to make currentPlayerPosition 0
+            playerStateBundle = null;
+        }
+        else{
+            Intent i = getActivity().getIntent();
+            if(i!=null){
+                recipe = (JsonUtil.Recipe) i.getSerializableExtra("recipe");
+                index = i.getIntExtra("index",0);
+            }
         }
 
         initializeFragment();
@@ -122,14 +141,30 @@ public class StepFragment extends Fragment {
 
         Uri uri = Uri.parse(recipe.steps.get(index).videoURL);
         MediaSource mediaSource = buildMediaSource(uri);
-        player.prepare(mediaSource, true, true);
+        // Prepare the player with the source.
+
+        player.prepare(mediaSource);
+        if (currentPlayerPosition != 0) {
+            player.seekTo(currentPlayerPosition);
+            currentPlayerPosition = 0;
+        }
+
+
+        //setPlayWhenReady can be used to start and pause playback
+        player.setPlayWhenReady(true);
     }
 
     private void releasePlayer() {
         if (player != null) {
+            //save fragment state
+            playerStateBundle = new Bundle();
+            playerStateBundle.putLong("PLAYER_POSITION", player.getCurrentPosition());
+            playerStateBundle.putInt("RECIPE_INDEX", index);
+            playerStateBundle.putSerializable("RECIPE_STEPS", recipe);
+
+            //release player
             playWhenReady = player.getPlayWhenReady();
             player.release();
-            player = null;
         }
     }
 
@@ -153,5 +188,11 @@ public class StepFragment extends Fragment {
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBundle("STATE_BUNDLE",playerStateBundle);
+        super.onSaveInstanceState(outState);
     }
 }
