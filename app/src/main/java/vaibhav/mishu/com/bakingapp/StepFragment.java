@@ -59,7 +59,7 @@ public class StepFragment extends Fragment {
     }
 
     public interface StepInterface{
-        public void onStepSelected(int position);
+        void onStepSelected(int position);
     }
 
     public void updateContent(Bundle recipeInfo){
@@ -75,11 +75,14 @@ public class StepFragment extends Fragment {
 
         if (savedInstanceState != null) {
             playerStateBundle = savedInstanceState.getBundle("STATE_BUNDLE");
-            currentPlayerPosition = playerStateBundle.getLong("PLAYER_POSITION");
-            recipe = (JsonUtil.Recipe) playerStateBundle.getSerializable("RECIPE_STEPS");
-            index = playerStateBundle.getInt("RECIPE_INDEX");
-            //set playerStateBundle as null to make currentPlayerPosition 0
-            playerStateBundle = null;
+            if(playerStateBundle!=null) {
+                currentPlayerPosition = playerStateBundle.getLong("PLAYER_POSITION");
+                playWhenReady = playerStateBundle.getBoolean("PLAYBACK_STATE");
+                playerStateBundle = null;
+            }
+                recipe = (JsonUtil.Recipe) savedInstanceState.getSerializable("RECIPE_STEPS");
+                index = savedInstanceState.getInt("RECIPE_INDEX");
+                //set playerStateBundle as null to make currentPlayerPosition 0
         }
         else{
             Intent i = getActivity().getIntent();
@@ -125,7 +128,11 @@ public class StepFragment extends Fragment {
         }
         else if(recipe.steps.get(index).thumbnailURL!=null && !recipe.steps.get(index).thumbnailURL.isEmpty()){
             playerView.setVisibility(View.GONE);
-            Picasso.with(getView().getContext()).load(Uri.parse(recipe.steps.get(index).thumbnailURL)).into(stepThumbnail);
+            //to avoid NUllPointerEx:
+            View view = getView();
+            if(getView()!=null){
+                Picasso.with(getView().getContext()).load(Uri.parse(recipe.steps.get(index).thumbnailURL)).into(stepThumbnail);
+            }
         }
         else {
             playerView.setVisibility(View.GONE);
@@ -160,10 +167,6 @@ public class StepFragment extends Fragment {
             player.seekTo(currentPlayerPosition);
             currentPlayerPosition = 0;
         }
-
-
-        //setPlayWhenReady can be used to start and pause playback
-        player.setPlayWhenReady(true);
     }
 
     private void releasePlayer() {
@@ -171,11 +174,8 @@ public class StepFragment extends Fragment {
             //save fragment state
             playerStateBundle = new Bundle();
             playerStateBundle.putLong("PLAYER_POSITION", player.getCurrentPosition());
-            playerStateBundle.putInt("RECIPE_INDEX", index);
-            playerStateBundle.putSerializable("RECIPE_STEPS", recipe);
-
+            playerStateBundle.putBoolean("PLAYBACK_STATE",player.getPlayWhenReady());
             //release player
-            playWhenReady = player.getPlayWhenReady();
             player.release();
         }
     }
@@ -205,6 +205,8 @@ public class StepFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putBundle("STATE_BUNDLE",playerStateBundle);
+        outState.putInt("RECIPE_INDEX", index);
+        outState.putSerializable("RECIPE_STEPS", recipe);
         super.onSaveInstanceState(outState);
     }
 }
