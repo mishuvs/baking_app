@@ -60,7 +60,7 @@ public class WidgetRVFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public int getCount() {
-        return currentRecipe.steps.size();
+        return currentRecipe.ingredients.size();
     }
 
     @Override
@@ -68,13 +68,11 @@ public class WidgetRVFactory implements RemoteViewsService.RemoteViewsFactory {
         // Construct a remote views item based on the app widget item XML file,
         // and set the text based on the position.
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
-        rv.setTextViewText(R.id.item, currentRecipe.steps.get(position).shortDescription);
-
+        rv.setTextViewText(R.id.item, currentRecipe.ingredients.get(position));
         //set Fill-In-Intent:
         Intent fillInIntent = new Intent();
         fillInIntent.putExtra("index",position);
         rv.setOnClickFillInIntent(R.id.item, fillInIntent);
-
         // Return the remote views object.
         return rv;
     }

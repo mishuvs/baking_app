@@ -13,6 +13,8 @@ import android.widget.RemoteViews;
 
 import java.util.ArrayList;
 
+import vaibhav.mishu.com.bakingapp.DetailActivity;
+import vaibhav.mishu.com.bakingapp.MainActivity;
 import vaibhav.mishu.com.bakingapp.R;
 import vaibhav.mishu.com.bakingapp.StepActivity;
 import vaibhav.mishu.com.bakingapp.util.FetchRecipes;
@@ -27,7 +29,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
     public static String ACTION_NEXT_RECIPE = "GET_NEXT_RECIPE",
             ACTION_PREVIOUS_RECIPE = "GET_PREVIOUS_RECIPE",
-            ACTION_CLICK_STEP = "CLICK_STEP";
+            ACTION_CLICK_INGREDIENTS = "CLICK_INGREDIENTS";
     private static ArrayList<JsonUtil.Recipe> recipes;
     private static int recipeIndex;
     private static RemoteViews rv;
@@ -73,7 +75,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
             //set PendingIntent template for collection items:
             Intent i = new Intent(context, RecipeWidgetProvider.class);
-            i.setAction(ACTION_CLICK_STEP);
+            i.setAction(ACTION_CLICK_INGREDIENTS);
             PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0 );
             rv.setPendingIntentTemplate(R.id.grid_view, pi);
 
@@ -95,8 +97,8 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         if(recipes==null) recipes = FetchRecipes.getRecipes(context);
 
         //if step clicked:
-        if(intent.getAction().equals(ACTION_CLICK_STEP)){
-            Intent i = new Intent(context, StepActivity.class);
+        if(intent.getAction().equals(ACTION_CLICK_INGREDIENTS)){
+            Intent i = new Intent(context, DetailActivity.class);
             int position = intent.getIntExtra("index",0);
             i.putExtra("recipe",recipes.get(recipeIndex));
             i.putExtra("index",position);
