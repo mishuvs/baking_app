@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -25,6 +26,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +42,7 @@ public class StepFragment extends Fragment {
     @BindView(R.id.previous) Button previous;
     @BindView(R.id.player_view) SimpleExoPlayerView playerView;
     @BindView(R.id.step_description) TextView stepDescription;
+    @BindView(R.id.step_thumbnail) ImageView stepThumbnail;
     
     private boolean playWhenReady = true;
 
@@ -111,23 +114,32 @@ public class StepFragment extends Fragment {
         setFields();
     }
 
-    private void checkButtons(){
-        if(index==0) previous.setEnabled(false);
-        else previous.setEnabled(true);
-        if(index==recipe.steps.size()-1) next.setEnabled(false);
-        else next.setEnabled(true);
-    }
-
     private void setFields() {
 
         checkButtons();
 
         if(recipe.steps.get(index).videoURL.length()!=0) {
             playerView.setVisibility(View.VISIBLE);
+            stepThumbnail.setVisibility(View.GONE);
             initializePlayer();
         }
-        else playerView.setVisibility(View.GONE);
+        else if(recipe.steps.get(index).thumbnailURL!=null && !recipe.steps.get(index).thumbnailURL.isEmpty()){
+            playerView.setVisibility(View.GONE);
+            Picasso.with(getView().getContext()).load(Uri.parse(recipe.steps.get(index).thumbnailURL)).into(stepThumbnail);
+        }
+        else {
+            playerView.setVisibility(View.GONE);
+            stepThumbnail.setVisibility(View.GONE);
+        }
+
         stepDescription.setText(recipe.steps.get(index).description);
+    }
+
+    private void checkButtons(){
+        if(index==0) previous.setEnabled(false);
+        else previous.setEnabled(true);
+        if(index==recipe.steps.size()-1) next.setEnabled(false);
+        else next.setEnabled(true);
     }
 
     private void initializePlayer() {
