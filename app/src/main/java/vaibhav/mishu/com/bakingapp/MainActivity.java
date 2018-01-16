@@ -3,10 +3,14 @@ package vaibhav.mishu.com.bakingapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -19,8 +23,10 @@ import vaibhav.mishu.com.bakingapp.util.JsonUtil;
 public class MainActivity extends AppCompatActivity {
 
     static ArrayList<JsonUtil.Recipe> recipes;
-    @BindView(R.id.recipe_list) ListView listView;
-    @BindView(R.id.empty_view) View emptyView;
+    @BindView(R.id.recipe_list)
+    RecyclerView recyclerView;
+    @BindView(R.id.empty_view)
+    View emptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,32 +34,73 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        ArrayList<String> recipeNames = new ArrayList<>();
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle("Recipe List");
 
-        recipes = FetchRecipes.getRecipes(this);
+        if (savedInstanceState == null) recipes = FetchRecipes.getRecipes(this);
+        else recipes = (ArrayList<JsonUtil.Recipe>) savedInstanceState.getSerializable("recipeList");
 
-        if(recipes!=null && recipes.size()>0){
-            for (JsonUtil.Recipe recipe: recipes
-                 ) {
-                recipeNames.add(recipe.name);
-            }
+
+        boolean isTablet = getResources().getBoolean(R.bool.isTablet);
+
+        RecipeListAdapter adapter = new RecipeListAdapter();
+        if (isTablet) {
+            GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 4);
+            recyclerView.setLayoutManager(layoutManager);
+        } else {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
+        }
+        recyclerView.setAdapter(adapter);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable("recipeList", recipes);
+        super.onSaveInstanceState(outState);
+    }
+
+
+    private class RecipeListAdapter extends RecyclerView.Adapter {
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recipe_item, parent, false);
+            return new RecipeHolder(view);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.recipe_item, R.id.recipe_name);
-        adapter.addAll(recipeNames);
-        listView.setAdapter(adapter);
-        listView.setEmptyView(emptyView);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            ((RecipeHolder)holder).recipeName.setText(recipes.get(position).name);
+        }
+
+        @Override
+        public int getItemCount() {
+            return (recipes != null) ? recipes.size() : 0;
+        }
+
+        class RecipeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            TextView recipeName;
+
+            RecipeHolder(View itemView) {
+                super(itemView);
+                recipeName = itemView.findViewById(R.id.recipe_name);
+                itemView.setOnClickListener(this);
+            }
+
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(recipes.size()==0 || recipes==null) {
-                    Toast.makeText(MainActivity.this,"Something went wrong! :(", Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                if (recipes.size() == 0 || recipes == null) {
+                    Toast.makeText(MainActivity.this, "Something went wrong! :(", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Intent i = new Intent(MainActivity.this,DetailActivity.class);
-                i.putExtra("recipe",recipes.get(position));
+                Intent i = new Intent(MainActivity.this, DetailActivity.class);
+                i.putExtra("recipe", recipes.get(getAdapterPosition()));
                 startActivity(i);
             }
-        });
+        }
     }
+
 }

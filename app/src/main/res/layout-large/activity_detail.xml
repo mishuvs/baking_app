@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/frags"
     android:baselineAligned="false">
-    <!-- "Fragment A" -->
-    <fragment class="vaibhav.mishu.com.bakingapp.DetailFragment"
-        android:id="@+id/detail_fragment"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"/>
-    <!-- "Fragment B" -->
-    <FrameLayout
-        android:id="@+id/step_fragment"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent" />
+
+    <include layout="@layout/toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <!-- "Fragment A" -->
+        <fragment class="vaibhav.mishu.com.bakingapp.DetailFragment"
+            android:id="@+id/detail_fragment"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+        <!-- "Fragment B" -->
+        <FrameLayout
+            android:id="@+id/step_fragment"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </LinearLayout>
