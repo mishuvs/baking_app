@@ -10,8 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -73,7 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            ((RecipeHolder)holder).recipeName.setText(recipes.get(position).name);
+            RecipeHolder recipeHolder = (RecipeHolder)holder;
+            recipeHolder.recipeName.setText(recipes.get(position).name);
+            if(recipes.get(position).imageUrl!=null && !recipes.get(position).imageUrl.isEmpty()){
+                Picasso.with(getApplicationContext()).load(recipes.get(position).imageUrl).into(recipeHolder.recipeImage);
+            }
+            else recipeHolder.recipeImage.setVisibility(View.GONE);
         }
 
         @Override
@@ -83,10 +91,12 @@ public class MainActivity extends AppCompatActivity {
 
         class RecipeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView recipeName;
+            ImageView recipeImage;
 
             RecipeHolder(View itemView) {
                 super(itemView);
                 recipeName = itemView.findViewById(R.id.recipe_name);
+                recipeImage = itemView.findViewById(R.id.recipe_image);
                 itemView.setOnClickListener(this);
             }
 

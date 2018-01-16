@@ -24,7 +24,7 @@ public class JsonUtil {
         JSONObject recipeJson, ingredientJson, stepJson;
         ArrayList<String> ingredientList;
         ArrayList<Step> stepList;
-        String recipeName;
+        String recipeName, recipeImageString;
         int recipeServings;
         ArrayList<Recipe> recipesList = new ArrayList<Recipe>();
 
@@ -59,9 +59,10 @@ public class JsonUtil {
 
                 recipeName = recipeJson.getString("name");
                 recipeServings = recipeJson.getInt("servings");
+                recipeImageString = recipeJson.getString("image");
 
                 //add to recipes list:
-                recipesList.add(new Recipe(recipeName, ingredientList, stepList, recipeServings));
+                recipesList.add(new Recipe(recipeName, ingredientList, stepList, recipeServings, recipeImageString));
 
             }
 
@@ -78,8 +79,9 @@ public class JsonUtil {
         public ArrayList<String> ingredients;
         public ArrayList<Step> steps;
         public int servings;
+        public String imageUrl;
 
-        Recipe(String recipeName, ArrayList<String> recipeIngedients, ArrayList<Step> recipeSteps, int serves){
+        Recipe(String recipeName, ArrayList<String> recipeIngedients, ArrayList<Step> recipeSteps, int serves, String imageUrl){
             name = recipeName;
             ingredients = recipeIngedients;
             steps = recipeSteps;
