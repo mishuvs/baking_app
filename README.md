@@ -5,13 +5,13 @@
 * [Picaso](https://github.com/square/picasso)
 
 ## Project Overview
-You will productionize an app, taking it from a functional state to a production-ready state. This will involve finding and handling error cases, adding accessibility features, allowing for localization, adding a widget, and adding a library.
+I productionized an app, taking it from a functional state to a production-ready state. This involved finding and handling error cases, adding accessibility features, allowing for localization, adding a widget, and adding a library.
 
 ## Why this Project?
-As a working Android developer, you often have to create and implement apps where you are responsible for designing and planning the steps you need to take to create a production-ready app. Unlike Popular Movies where we gave you an implementation guide, it will be up to you to figure things out for the Baking App.
+Working Android developers often have to create and implement apps where they are responsible for designing and planning the steps they need to take to create a production-ready app. Unlike Popular Movies where Udacity gave me an implementation guide, it was left up to me to figure things out for the Baking App.
 
-## What Will I Learn?
-In this project you will:
+## What did I Learn?
+In this project I learnt to:
 * Use MediaPlayer/Exoplayer to display videos.
 * Handle error cases in Android.
 * Add a widget to your app experience.
@@ -19,6 +19,7 @@ In this project you will:
 * Use Fragments to create a responsive design that works on phones and tablets.
 
 ## Rubric
+(My project had to meet all rubric specifications in order to get accepted)
 
 ### General App Usage
 - [x] App should display recipes from provided network resource.
