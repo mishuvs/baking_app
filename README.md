@@ -1,11 +1,25 @@
-**Baking App** created as a part of Udacity [Android Developer Nanodegree Program](https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801).
+# Baking Recipes
+created as a part of Udacity [Android Developer Nanodegree Program](https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801).
+
+## Project Overview
+I productionized an app, taking it from a functional state to a production-ready state. This involved finding and handling error cases, adding accessibility features, allowing for localization, adding a widget, and adding a library.
+
+## Screenshots
+<table>
+  <tr>
+    <td><img src="screenshots/recipe_list.png"></td>
+    <td><img src="screenshots/recipe_detail.png"></td>
+    <td><img src="screenshots/ingredients.png"></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/step_screen.png"></td>
+    <td><img src="screenshots/widget.png"></td>
+  </tr>
+</table>
 
 ## Used Libraries
 * [OkHttp](https://github.com/square/okhttp)
 * [Picaso](https://github.com/square/picasso)
-
-## Project Overview
-I productionized an app, taking it from a functional state to a production-ready state. This involved finding and handling error cases, adding accessibility features, allowing for localization, adding a widget, and adding a library.
 
 ## Why this Project?
 Working Android developers often have to create and implement apps where they are responsible for designing and planning the steps they need to take to create a production-ready app. Unlike Popular Movies where Udacity gave me an implementation guide, it was left up to me to figure things out for the Baking App.
